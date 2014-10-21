@@ -34,3 +34,31 @@ func TestFetcher(t *testing.T) {
 		}
 	}
 }
+
+func TestNewNodeRecord(t *testing.T) {
+	n, err := NewNodeRecord([]byte{1, 1, 0, 0, 0, 1, 1, 0, 0})
+	if err != nil {
+		t.Errorf("Error %v", err)
+	}
+	if !n.Active {
+		t.Errorf("Node should be active was %v", n.Active)
+	}
+	if n.Relationships != 1 {
+		t.Errorf("Node should have relationships index of %v", n.Relationships)
+	}
+	if n.Properties != 257 {
+		t.Errorf("Node should have properties index of %v", n.Properties)
+	}
+}
+
+func TestNodeRecordBytes(t *testing.T) {
+	r := NodeRecord{false, 1234, 9876}
+
+	r1, err := NewNodeRecord(r.Bytes())
+	if err != nil {
+		t.Errorf("Error %v", err)
+	}
+	if !reflect.DeepEqual(r, *r1) {
+		t.Errorf("%v should be identical to %v", r, r1)
+	}
+}

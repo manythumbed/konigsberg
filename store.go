@@ -32,6 +32,8 @@ func (f ReaderFetcher) Fetch(index int64) ([]byte, error) {
 
 type Index int64
 
+var Empty Index = extractIndex([]byte{255, 255, 255, 255})
+
 func (i Index) Bytes() []byte {
 	b := make([]byte, 4)
 
@@ -68,18 +70,81 @@ func (n NodeRecord) Bytes() []byte {
 		b[0] = 1
 	}
 
-	r := n.Relationships.Bytes()
-	p := n.Properties.Bytes()
-
-	b[1] = r[0]
-	b[2] = r[1]
-	b[3] = r[2]
-	b[4] = r[3]
-
-	b[5] = p[0]
-	b[6] = p[1]
-	b[7] = p[2]
-	b[8] = p[3]
+	for i, v := range n.Relationships.Bytes() {
+		b[1+i] = v
+	}
+	for i, v := range n.Properties.Bytes() {
+		b[5+i] = v
+	}
 
 	return b
+}
+
+type Link struct {
+	Index
+	Previous Index
+	Next     Index
+}
+
+func (l Link) Bytes() []byte {
+	b := make([]byte, 12)
+
+	for i, v := range l.Index.Bytes() {
+		b[i] = v
+	}
+	for i, v := range l.Previous.Bytes() {
+		b[4+i] = v
+	}
+	for i, v := range l.Next.Bytes() {
+		b[8+i] = v
+	}
+
+	return b
+}
+
+func extractLink(b []byte) Link {
+	return Link{
+		Index:    extractIndex(b[0:4]),
+		Previous: extractIndex(b[4:8]),
+		Next:     extractIndex(b[8:]),
+	}
+}
+
+type RelationshipRecord struct {
+	Active     bool
+	Properties Index
+	Start      Link
+	End        Link
+}
+
+func (r RelationshipRecord) Bytes() []byte {
+	b := make([]byte, 29)
+
+	if r.Active {
+		b[0] = 1
+	}
+
+	for i, v := range r.Properties.Bytes() {
+		b[1+i] = v
+	}
+	for i, v := range r.Start.Bytes() {
+		b[5+i] = v
+	}
+	for i, v := range r.End.Bytes() {
+		b[17+i] = v
+	}
+	return b
+}
+
+func NewRelationshipRecord(b []byte) (*RelationshipRecord, error) {
+	if b == nil || len(b) != 29 {
+		return nil, errors.New(fmt.Sprintf("Invalid bytes for relationship record [%v]", b))
+	}
+
+	return &RelationshipRecord{
+		Active:     b[0] == 1,
+		Properties: extractIndex(b[1:5]),
+		Start:      extractLink(b[5:17]),
+		End:        extractLink(b[17:]),
+	}, nil
 }

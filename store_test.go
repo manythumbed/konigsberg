@@ -62,3 +62,29 @@ func TestNodeRecordBytes(t *testing.T) {
 		t.Errorf("%v should be identical to %v", r, r1)
 	}
 }
+
+func TestRelationshipRecord(t *testing.T) {
+	r := RelationshipRecord{
+		Active:     true,
+		Properties: 1,
+		Start: Link{
+			Index:    2,
+			Previous: 3,
+			Next:     4,
+		},
+		End: Link{
+			Index:    22,
+			Previous: 33,
+			Next:     44,
+		},
+	}
+
+	r1, err := NewRelationshipRecord(r.Bytes())
+	if err != nil {
+		t.Errorf("Error %v", err)
+	}
+	if !reflect.DeepEqual(r, *r1) {
+		t.Errorf("Wanted %v, recieved %v", r, r1)
+	}
+
+}

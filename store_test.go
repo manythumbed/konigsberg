@@ -35,8 +35,8 @@ func TestFetcher(t *testing.T) {
 	}
 }
 
-func TestNewNodeRecord(t *testing.T) {
-	n, err := NewNodeRecord([]byte{1, 1, 0, 0, 0, 1, 1, 0, 0})
+func TestnewNodeRecord(t *testing.T) {
+	n, err := newNode([]byte{1, 1, 0, 0, 0, 1, 1, 0, 0})
 	if err != nil {
 		t.Errorf("Error %v", err)
 	}
@@ -52,9 +52,9 @@ func TestNewNodeRecord(t *testing.T) {
 }
 
 func TestNodeRecordBytes(t *testing.T) {
-	r := NodeRecord{false, 1234, 9876}
+	r := Node{false, 1234, 9876}
 
-	r1, err := NewNodeRecord(r.bytes())
+	r1, err := newNode(r.bytes())
 	if err != nil {
 		t.Errorf("Error %v", err)
 	}
@@ -63,8 +63,8 @@ func TestNodeRecordBytes(t *testing.T) {
 	}
 }
 
-func TestRelationshipRecord(t *testing.T) {
-	r := RelationshipRecord{
+func TestRelationship(t *testing.T) {
+	r := Relationship{
 		Active:     true,
 		Type:       111,
 		Properties: 1,
@@ -80,7 +80,7 @@ func TestRelationshipRecord(t *testing.T) {
 		},
 	}
 
-	r1, err := NewRelationshipRecord(r.bytes())
+	r1, err := newRelationship(r.bytes())
 	if err != nil {
 		t.Errorf("Error %v", err)
 	}

@@ -34,6 +34,10 @@ type Index int64
 
 var Empty Index = extractIndex([]byte{255, 255, 255, 255})
 
+func extractIndex(b []byte) Index {
+	return Index(int64(b[0]) | int64(b[1])<<8 | int64(b[2])<<16 | int64(b[3])<<24)
+}
+
 func (i Index) bytes() []byte {
 	b := make([]byte, 4)
 
@@ -45,25 +49,21 @@ func (i Index) bytes() []byte {
 	return b
 }
 
-type NodeRecord struct {
+type Node struct {
 	Active        bool
 	Relationships Index
 	Properties    Index
 }
 
-func NewNodeRecord(b []byte) (*NodeRecord, error) {
+func newNode(b []byte) (*Node, error) {
 	if b == nil || len(b) != 9 {
 		return nil, errors.New(fmt.Sprintf("Invalid bytes for node record [%v]", b))
 	}
 
-	return &NodeRecord{b[0] == 1, extractIndex(b[1:5]), extractIndex(b[5:])}, nil
+	return &Node{b[0] == 1, extractIndex(b[1:5]), extractIndex(b[5:])}, nil
 }
 
-func extractIndex(b []byte) Index {
-	return Index(int64(b[0]) | int64(b[1])<<8 | int64(b[2])<<16 | int64(b[3])<<24)
-}
-
-func (n NodeRecord) bytes() []byte {
+func (n Node) bytes() []byte {
 	b := make([]byte, 9)
 
 	if n.Active {
@@ -110,7 +110,7 @@ func extractLink(b []byte) Link {
 	}
 }
 
-type RelationshipRecord struct {
+type Relationship struct {
 	Active     bool
 	Type       Index
 	Properties Index
@@ -118,7 +118,7 @@ type RelationshipRecord struct {
 	End        Link
 }
 
-func (r RelationshipRecord) bytes() []byte {
+func (r Relationship) bytes() []byte {
 	b := make([]byte, 33)
 
 	if r.Active {
@@ -140,12 +140,12 @@ func (r RelationshipRecord) bytes() []byte {
 	return b
 }
 
-func NewRelationshipRecord(b []byte) (*RelationshipRecord, error) {
+func newRelationship(b []byte) (*Relationship, error) {
 	if b == nil || len(b) != 33 {
 		return nil, errors.New(fmt.Sprintf("Invalid bytes for relationship record [%v]", b))
 	}
 
-	return &RelationshipRecord{
+	return &Relationship{
 		Active:     b[0] == 1,
 		Type:       extractIndex(b[1:5]),
 		Properties: extractIndex(b[5:9]),

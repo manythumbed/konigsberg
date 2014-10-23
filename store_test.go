@@ -1,4 +1,4 @@
-package store
+package storage
 
 import (
 	"bytes"
@@ -54,7 +54,7 @@ func TestNewNodeRecord(t *testing.T) {
 func TestNodeRecordBytes(t *testing.T) {
 	r := NodeRecord{false, 1234, 9876}
 
-	r1, err := NewNodeRecord(r.Bytes())
+	r1, err := NewNodeRecord(r.bytes())
 	if err != nil {
 		t.Errorf("Error %v", err)
 	}
@@ -80,7 +80,7 @@ func TestRelationshipRecord(t *testing.T) {
 		},
 	}
 
-	r1, err := NewRelationshipRecord(r.Bytes())
+	r1, err := NewRelationshipRecord(r.bytes())
 	if err != nil {
 		t.Errorf("Error %v", err)
 	}

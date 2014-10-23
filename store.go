@@ -1,4 +1,4 @@
-package store
+package storage
 
 import (
 	"errors"
@@ -34,7 +34,7 @@ type Index int64
 
 var Empty Index = extractIndex([]byte{255, 255, 255, 255})
 
-func (i Index) Bytes() []byte {
+func (i Index) bytes() []byte {
 	b := make([]byte, 4)
 
 	b[0] = byte(i)
@@ -63,17 +63,17 @@ func extractIndex(b []byte) Index {
 	return Index(int64(b[0]) | int64(b[1])<<8 | int64(b[2])<<16 | int64(b[3])<<24)
 }
 
-func (n NodeRecord) Bytes() []byte {
+func (n NodeRecord) bytes() []byte {
 	b := make([]byte, 9)
 
 	if n.Active {
 		b[0] = 1
 	}
 
-	for i, v := range n.Relationships.Bytes() {
+	for i, v := range n.Relationships.bytes() {
 		b[1+i] = v
 	}
-	for i, v := range n.Properties.Bytes() {
+	for i, v := range n.Properties.bytes() {
 		b[5+i] = v
 	}
 
@@ -86,16 +86,16 @@ type Link struct {
 	Next     Index
 }
 
-func (l Link) Bytes() []byte {
+func (l Link) bytes() []byte {
 	b := make([]byte, 12)
 
-	for i, v := range l.Index.Bytes() {
+	for i, v := range l.Index.bytes() {
 		b[i] = v
 	}
-	for i, v := range l.Previous.Bytes() {
+	for i, v := range l.Previous.bytes() {
 		b[4+i] = v
 	}
-	for i, v := range l.Next.Bytes() {
+	for i, v := range l.Next.bytes() {
 		b[8+i] = v
 	}
 
@@ -118,23 +118,23 @@ type RelationshipRecord struct {
 	End        Link
 }
 
-func (r RelationshipRecord) Bytes() []byte {
+func (r RelationshipRecord) bytes() []byte {
 	b := make([]byte, 33)
 
 	if r.Active {
 		b[0] = 1
 	}
 
-	for i, v := range r.Type.Bytes() {
+	for i, v := range r.Type.bytes() {
 		b[1+i] = v
 	}
-	for i, v := range r.Properties.Bytes() {
+	for i, v := range r.Properties.bytes() {
 		b[5+i] = v
 	}
-	for i, v := range r.Start.Bytes() {
+	for i, v := range r.Start.bytes() {
 		b[9+i] = v
 	}
-	for i, v := range r.End.Bytes() {
+	for i, v := range r.End.bytes() {
 		b[21+i] = v
 	}
 	return b

@@ -66,6 +66,7 @@ func TestNodeRecordBytes(t *testing.T) {
 func TestRelationshipRecord(t *testing.T) {
 	r := RelationshipRecord{
 		Active:     true,
+		Type:       111,
 		Properties: 1,
 		Start: Link{
 			Index:    2,
@@ -84,7 +85,7 @@ func TestRelationshipRecord(t *testing.T) {
 		t.Errorf("Error %v", err)
 	}
 	if !reflect.DeepEqual(r, *r1) {
-		t.Errorf("Wanted %v, recieved %v", r, r1)
+		t.Errorf("Wanted %v, received %v", r, r1)
 	}
 
 }

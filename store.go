@@ -112,39 +112,44 @@ func extractLink(b []byte) Link {
 
 type RelationshipRecord struct {
 	Active     bool
+	Type       Index
 	Properties Index
 	Start      Link
 	End        Link
 }
 
 func (r RelationshipRecord) Bytes() []byte {
-	b := make([]byte, 29)
+	b := make([]byte, 33)
 
 	if r.Active {
 		b[0] = 1
 	}
 
-	for i, v := range r.Properties.Bytes() {
+	for i, v := range r.Type.Bytes() {
 		b[1+i] = v
 	}
-	for i, v := range r.Start.Bytes() {
+	for i, v := range r.Properties.Bytes() {
 		b[5+i] = v
 	}
+	for i, v := range r.Start.Bytes() {
+		b[9+i] = v
+	}
 	for i, v := range r.End.Bytes() {
-		b[17+i] = v
+		b[21+i] = v
 	}
 	return b
 }
 
 func NewRelationshipRecord(b []byte) (*RelationshipRecord, error) {
-	if b == nil || len(b) != 29 {
+	if b == nil || len(b) != 33 {
 		return nil, errors.New(fmt.Sprintf("Invalid bytes for relationship record [%v]", b))
 	}
 
 	return &RelationshipRecord{
 		Active:     b[0] == 1,
-		Properties: extractIndex(b[1:5]),
-		Start:      extractLink(b[5:17]),
-		End:        extractLink(b[17:]),
+		Type:       extractIndex(b[1:5]),
+		Properties: extractIndex(b[5:9]),
+		Start:      extractLink(b[9:21]),
+		End:        extractLink(b[21:]),
 	}, nil
 }

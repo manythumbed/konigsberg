@@ -24,13 +24,13 @@ func TestFetcher(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		f := ReaderFetcher{test.size, bytes.NewReader(test.data)}
-		out, err := f.Fetch(test.index)
+		f := fetcher{test.size, bytes.NewReader(test.data)}
+		out, err := f.fetch(test.index)
 		if !reflect.DeepEqual(err, test.err) {
-			t.Errorf("[%v %v].Fetch(%v) = %v, want %v", test.size, test.data, test.index, err, test.err)
+			t.Errorf("[%v %v].fetch(%v) = %v, want %v", test.size, test.data, test.index, err, test.err)
 		}
 		if !reflect.DeepEqual(out, test.want) {
-			t.Errorf("[%v %v].Fetch(%v) = %v, want %v", test.size, test.data, test.index, out, test.want)
+			t.Errorf("[%v %v].fetch(%v) = %v, want %v", test.size, test.data, test.index, out, test.want)
 		}
 	}
 }

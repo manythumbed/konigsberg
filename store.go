@@ -34,3 +34,11 @@ func (f fetcher) fetch(index int64) ([]byte, error) {
 
 	return buffer, nil
 }
+
+func relationshipFetcher(r io.ReaderAt) fetcher {
+	return fetcher{relationshipSize, r}
+}
+
+func nodeFetcher(r io.ReaderAt) fetcher {
+	return fetcher{nodeSize, r}
+}

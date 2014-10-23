@@ -5,6 +5,12 @@ import (
 	"fmt"
 )
 
+const (
+	indexSize        = 4
+	nodeSize         = 9
+	relationshipSize = 33
+)
+
 type Index int64
 
 var Empty Index = extractIndex([]byte{255, 255, 255, 255})
@@ -14,7 +20,7 @@ func extractIndex(b []byte) Index {
 }
 
 func (i Index) bytes() []byte {
-	b := make([]byte, 4)
+	b := make([]byte, indexSize)
 
 	b[0] = byte(i)
 	b[1] = byte(i >> 8)

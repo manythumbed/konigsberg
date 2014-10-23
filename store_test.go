@@ -35,7 +35,7 @@ func TestFetcher(t *testing.T) {
 	}
 }
 
-func TestnewNodeRecord(t *testing.T) {
+func TestnewNode(t *testing.T) {
 	n, err := newNode([]byte{1, 1, 0, 0, 0, 1, 1, 0, 0})
 	if err != nil {
 		t.Errorf("Error %v", err)
@@ -51,7 +51,7 @@ func TestnewNodeRecord(t *testing.T) {
 	}
 }
 
-func TestNodeRecordBytes(t *testing.T) {
+func TestNodeBytes(t *testing.T) {
 	r := Node{false, 1234, 9876}
 
 	r1, err := newNode(r.bytes())
